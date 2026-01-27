@@ -1,5 +1,5 @@
 {
-    "name": "yireo/module-reset-mysql-triggers",
+    "name": "yireo/magento2-reset-mysql-triggers",
     "version": "1.0.0",
     "description": "N/A",
     "type": "magento2-module",
