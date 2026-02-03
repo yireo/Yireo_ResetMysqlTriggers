@@ -5,7 +5,7 @@
 ### Installation
 Install this package via composer:
 ```bash
-composer require yireo/module-reset-mysql-triggers
+composer require yireo/magento2-reset-mysql-triggers
 ```
 
 Next, enable this module:
