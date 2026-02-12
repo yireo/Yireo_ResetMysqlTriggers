@@ -6,5 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.1] - 12 February 2026
+### Fixed
+- Add trigger name arg for `db:trigger:remove` CLI
+- Update README.md
+
 ## [1.0.0] - 15 January 2026
 - Initial setup
