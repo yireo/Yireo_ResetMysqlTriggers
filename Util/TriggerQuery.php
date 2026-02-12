@@ -3,6 +3,7 @@
 namespace Yireo\ResetMysqlTriggers\Util;
 
 use Magento\Framework\App\ResourceConnection;
+use Magento\Framework\DB\Adapter\Pdo\Mysql;
 
 class TriggerQuery
 {
@@ -31,6 +32,10 @@ class TriggerQuery
     private function getDatabaseName(): string
     {
         $connection = $this->resourceConnection->getConnection();
+        if (false === $connection instanceof Mysql) {
+            return '';
+        }
+
         $config = $connection->getConfig();
 
         return $config['dbname'] ?? '';
