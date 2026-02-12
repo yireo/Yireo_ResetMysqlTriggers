@@ -3,5 +3,6 @@
     "modules": [],
     "components": [],
     "config": [],
-    "tests": []
+    "tests": [],
+    "phpstan_level": "1"
 }
