@@ -4,5 +4,7 @@
     "components": [],
     "config": [],
     "tests": [],
-    "phpstan_level": "5"
+    "phpstan_level": "5",
+    "module_name": "Yireo_ResetMysqlTriggers",
+    "composer_name": "yireo/magento2-reset-mysql-triggers"
 }
