@@ -8,7 +8,7 @@
 <!-- badges.specs.end -->
 
 
-**This Magento 2 module is an add-on package to the LokiCheckout.**
+> This Magento 2 module adds a CLI command `db:trigger:remove` to remove a given MySQL `TRIGGER` from the current database
 
 ### Installation
 Install this package via composer:
