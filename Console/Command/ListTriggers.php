@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Yireo\ResetMysqlTriggers\Console\Command;
 
@@ -6,14 +6,15 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Yireo\ResetMysqlTriggers\Console\OutputSanitizer;
 use Yireo\ResetMysqlTriggers\Util\TriggerQuery;
 
 class ListTriggers extends Command
 {
     public function __construct(
-        private TriggerQuery $triggerQuery,
-        ?string $name = null)
-    {
+        private readonly TriggerQuery $triggerQuery,
+        ?string $name = null
+    ) {
         parent::__construct($name);
     }
 
@@ -36,10 +37,10 @@ class ListTriggers extends Command
 
         foreach ($this->triggerQuery->getTriggers() as $trigger) {
             $table->addRow([
-                $trigger['TRIGGER_NAME'],
-                $trigger['ACTION_TIMING'],
-                $trigger['EVENT_OBJECT_TABLE'],
-                $trigger['EVENT_MANIPULATION'],
+                OutputSanitizer::sanitize($trigger['TRIGGER_NAME'] ?? ''),
+                OutputSanitizer::sanitize($trigger['ACTION_TIMING'] ?? ''),
+                OutputSanitizer::sanitize($trigger['EVENT_OBJECT_TABLE'] ?? ''),
+                OutputSanitizer::sanitize($trigger['EVENT_MANIPULATION'] ?? ''),
             ]);
         }
 

@@ -2,42 +2,56 @@
 
 namespace Yireo\ResetMysqlTriggers\Util;
 
+use InvalidArgumentException;
 use Magento\Framework\App\ResourceConnection;
-use Magento\Framework\DB\Adapter\Pdo\Mysql;
 
 class TriggerQuery
 {
     public function __construct(
-        private ResourceConnection $resourceConnection
+        private readonly ResourceConnection $resourceConnection
     ) {
     }
 
+    /**
+     * @return array<int, array<string, string>>
+     */
     public function getTriggers(): array
     {
-        $database = $this->getDatabaseName();
-        $query = 'SELECT * FROM information_schema.TRIGGERS WHERE TRIGGER_SCHEMA = "'.$database.'"';
-
         $connection = $this->resourceConnection->getConnection();
-        return $connection->fetchAll($query);
+        $select = $connection->select()
+            ->from(
+                'information_schema.TRIGGERS',
+                ['TRIGGER_NAME', 'ACTION_TIMING', 'EVENT_OBJECT_TABLE', 'EVENT_MANIPULATION']
+            )
+            ->where('TRIGGER_SCHEMA = DATABASE()')
+            ->order('TRIGGER_NAME');
+
+        return $connection->fetchAll($select);
     }
 
-    public function removeTrigger(string $triggerName): bool
+    public function triggerExists(string $triggerName): bool
     {
-        $query = 'DROP TRIGGER IF EXISTS '.$triggerName;
-        $connection = $this->resourceConnection->getConnection();
-        $connection->query($query);
-        return true;
-    }
-
-    private function getDatabaseName(): string
-    {
-        $connection = $this->resourceConnection->getConnection();
-        if (false === $connection instanceof Mysql) {
-            return '';
+        foreach ($this->getTriggers() as $trigger) {
+            if ($trigger['TRIGGER_NAME'] === $triggerName) {
+                return true;
+            }
         }
 
-        $config = $connection->getConfig();
+        return false;
+    }
 
-        return $config['dbname'] ?? '';
+    public function removeTrigger(string $triggerName): void
+    {
+        if ($triggerName === '') {
+            throw new InvalidArgumentException('Trigger name is empty');
+        }
+
+        $connection = $this->resourceConnection->getConnection();
+        $databaseName = (string)$connection->fetchOne('SELECT DATABASE()');
+        $identifier = $databaseName !== ''
+            ? $connection->quoteIdentifier([$databaseName, $triggerName])
+            : $connection->quoteIdentifier([$triggerName]);
+
+        $connection->query('DROP TRIGGER IF EXISTS ' . $identifier);
     }
 }
