@@ -159,6 +159,10 @@ class RemoveTriggerTest extends TriggerTestCase
         return $triggerQuery;
     }
 
+    /**
+     * @param array<string, mixed> $input
+     * @param array<string, mixed> $options
+     */
     private function execute(array $input, ?TriggerQuery $triggerQuery = null, array $options = []): CommandTester
     {
         $command = $triggerQuery

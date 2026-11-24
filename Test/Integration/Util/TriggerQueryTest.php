@@ -3,6 +3,7 @@
 namespace Yireo\ResetMysqlTriggers\Test\Integration\Util;
 
 use InvalidArgumentException;
+use Magento\Framework\Exception\LocalizedException;
 use Magento\TestFramework\Helper\Bootstrap;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Yireo\ResetMysqlTriggers\Test\Integration\TriggerTestCase;
@@ -51,6 +52,9 @@ class TriggerQueryTest extends TriggerTestCase
         $this->assertContains('yireo_test_keep', $triggerNames);
     }
 
+    /**
+     * @return array<string, array{string}>
+     */
     public static function getTriggerNamesToRemove(): array
     {
         return [
@@ -58,7 +62,8 @@ class TriggerQueryTest extends TriggerTestCase
             'dot' => ['yireo.test'],
             'backtick' => ['yireo`tick'],
             'space' => ['yireo test'],
-            'injection' => ['yireo_x; DROP TABLE yireo_reset_mysql_triggers_test'],
+            'reserved word' => ['select'],
+            'stacked query attempt' => ['yireo_x` /* DROP TRIGGER yireo_test_keep */'],
         ];
     }
 
@@ -66,7 +71,22 @@ class TriggerQueryTest extends TriggerTestCase
     {
         $this->createTrigger('yireo_test_keep');
 
-        $this->getTriggerQuery()->removeTrigger('yireo_test_missing; DROP TRIGGER yireo_test_keep');
+        $exception = null;
+        try {
+            $this->getTriggerQuery()->removeTrigger('yireo_test_missing; DROP TRIGGER yireo_test_keep');
+        } catch (LocalizedException $exception) {
+            $this->assertStringContainsString('Multiple queries', $exception->getMessage());
+        }
+
+        $this->assertNotNull($exception);
+        $this->assertContains('yireo_test_keep', $this->getTriggerNames());
+    }
+
+    public function testRemoveTriggerWithBacktickBreakoutOnlyTargetsLiteralName(): void
+    {
+        $this->createTrigger('yireo_test_keep');
+
+        $this->getTriggerQuery()->removeTrigger('yireo_test_missing`, `yireo_test_keep');
 
         $this->assertContains('yireo_test_keep', $this->getTriggerNames());
     }

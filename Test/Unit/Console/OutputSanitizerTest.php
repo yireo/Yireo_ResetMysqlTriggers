@@ -15,6 +15,9 @@ class OutputSanitizerTest extends TestCase
         $this->assertSame($expected, OutputSanitizer::sanitize($value));
     }
 
+    /**
+     * @return array<string, array{mixed, string}>
+     */
     public static function getValues(): array
     {
         return [

@@ -52,6 +52,7 @@ class TriggerQuery
             ? $connection->quoteIdentifier([$databaseName, $triggerName])
             : $connection->quoteIdentifier([$triggerName]);
 
+        // phpcs:ignore Magento2.SQL.RawQuery -- identifier is quoted, DDL has no query builder
         $connection->query('DROP TRIGGER IF EXISTS ' . $identifier);
     }
 }
