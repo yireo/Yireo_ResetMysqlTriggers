@@ -3,9 +3,20 @@
     "modules": [],
     "components": [],
     "config": [],
-    "tests": [],
+    "tests": {
+        "unit": 2,
+        "integration": 19,
+        "functional": 0
+    },
     "phpstan_level": "8",
     "module_name": "Yireo_ResetMysqlTriggers",
     "composer_name": "yireo/magento2-reset-mysql-triggers",
-    "phpcs_severity": "9"
+    "phpcs_severity": "9",
+    "php_versions": [
+        "8.2",
+        "8.3",
+        "8.4"
+    ],
+    "skip_magento_versions": [],
+    "skip_css_utils": false
 }
